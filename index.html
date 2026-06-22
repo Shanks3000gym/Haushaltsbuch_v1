@@ -2,216 +2,281 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinanzKompass v1.2 Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FinanzKompass v1.5 Premium</title>
     <style>
         :root {
-            --bg-color: #0d131a;
-            --card-bg: #16222f;
-            --text-color: #ffffff;
-            --text-muted: #8a9ba8;
-            --accent-blue: #00a8ff;
-            --accent-green: #00e676;
-            --accent-red: #ff5252;
-            --accent-orange: #ff9100;
-            --border-color: #233446;
+            --bg-color: #080c10;
+            --card-bg: rgba(22, 34, 47, 0.7);
+            --card-solid: #131f2b;
+            --text-color: #f5f6f9;
+            --text-muted: #7f8e9c;
+            --accent-blue: #38b6ff;
+            --accent-green: #00f076;
+            --accent-red: #ff4a5a;
+            --accent-orange: #ff9f1a;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding-bottom: 90px;
-            font-size: 16px;
+            padding-bottom: 110px;
+            padding-top: env(safe-area-inset-top);
+            background-image: radial-gradient(circle at top right, rgba(56, 182, 255, 0.08), transparent 400px),
+                              radial-gradient(circle at bottom left, rgba(0, 240, 118, 0.05), transparent 400px);
+            background-attachment: fixed;
         }
 
         header {
-            background-color: var(--card-bg);
-            padding: 20px 16px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            padding: 24px 20px 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-blue);
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 30%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .container {
-            padding: 16px;
+            padding: 0 16px;
             max-width: 600px;
             margin: 0 auto;
         }
 
+        /* --- PRE-MIUM CARDS --- */
         .main-card {
-            background: linear-gradient(135deg, #1e2f42, #16222f);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, rgba(28, 45, 62, 0.9), rgba(16, 26, 37, 0.9));
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(56, 182, 255, 0.15);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
         }
 
         .main-card .label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
 
         .main-card .amount {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+            background: linear-gradient(110deg, #fff, #b0c4de);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .mini-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
         }
 
         .mini-card .title {
             font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .mini-card .val {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
         .val.green { color: var(--accent-green); }
         .val.red { color: var(--accent-red); }
         .val.orange { color: var(--accent-orange); }
+        .val.blue { color: var(--accent-blue); }
 
         .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 20px 0 10px 0;
+            font-size: 15px;
+            font-weight: 700;
+            margin: 24px 0 12px 4px;
             color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-small {
-            background: none;
-            border: none;
-            color: var(--accent-blue);
-            font-size: 14px;
-            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
 
         .card {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* --- MODERN LISTS --- */
+        .list-row {
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .budget-row {
-            margin-bottom: 12px;
-        }
-        .budget-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-        .progress-bar {
-            background-color: #233446;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: var(--accent-blue);
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .list-item {
+            padding: 14px 16px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #1d2d3d;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: transform 0.2s;
         }
-        .list-item:last-child {
-            border-bottom: none;
+
+        .list-row:active {
+            transform: scale(0.98);
         }
+
         .item-info .name {
             font-size: 15px;
-            font-weight: 500;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
         }
+
         .item-info .sub {
             font-size: 12px;
             color: var(--text-muted);
         }
+
         .item-amount {
-            font-weight: 600;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.2px;
         }
 
-        .fab {
+        /* --- FLOATING NAVIGATION BAR --- */
+        .nav-wrapper {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background-color: var(--accent-blue);
-            border-radius: 50%;
+            bottom: 24px;
+            left: 16px;
+            right: 16px;
+            z-index: 999;
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 28px;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            cursor: pointer;
-            z-index: 100;
         }
 
+        .tabs {
+            background: rgba(19, 31, 43, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 6px;
+            display: flex;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-blue);
+            color: #080c10;
+            box-shadow: 0 4px 12px rgba(56, 182, 255, 0.3);
+        }
+
+        /* --- BUDGES & PROGRESS --- */
+        .budget-row {
+            margin-bottom: 16px;
+        }
+        .budget-row:last-child { margin-bottom: 0; }
+        
+        .progress-bar {
+            background-color: rgba(255,255,255,0.05);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        /* --- PREMIUM MODAL --- */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(4, 6, 9, 0.8);
             z-index: 1000;
             justify-content: center;
             align-items: flex-end;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background-color: var(--card-bg);
+            background: #111a24;
             width: 100%;
-            max-width: 500px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            padding: 20px;
-            animation: slideUp 0.2s ease-out;
+            max-width: 550px;
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            padding: 24px 24px calc(24px + env(safe-area-inset-bottom)) 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            animation: slideUp 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
         }
 
         @keyframes slideUp {
@@ -219,225 +284,187 @@
             to { transform: translateY(0); }
         }
 
-        .form-group {
-            margin-bottom: 14px;
-        }
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
         .form-control {
             width: 100%;
-            background-color: var(--bg-color);
+            background-color: rgba(255,255,255,0.04);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 14px;
             color: white;
             font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-blue);
         }
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
         .btn-submit {
             width: 100%;
-            background-color: var(--accent-blue);
-            color: white;
+            background: linear-gradient(135deg, var(--accent-blue), #0084ff);
+            color: #080c10;
             border: none;
-            padding: 14px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 14px;
             font-size: 16px;
-            font-weight: 600;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        .btn-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            float: right;
-            font-size: 16px;
+            font-weight: 700;
+            margin-top: 12px;
+            box-shadow: 0 6px 20px rgba(56, 182, 255, 0.25);
         }
 
-        .tabs {
-            display: flex;
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-        }
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .tab-btn.active {
-            background-color: var(--accent-blue);
-            color: white;
-        }
-        .view-section {
-            display: none;
-        }
-        .view-section.active {
-            display: block;
-        }
-
-        /* Neue Features v1.2 Pro */
-        .fav-container {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        .fav-chip {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            color: var(--accent-blue);
-            cursor: pointer;
-        }
-        .chart-box {
+        /* --- PREMIUM FAB --- */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), #0084ff);
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 16px 0;
+            font-size: 32px;
+            color: #080c10;
+            box-shadow: 0 8px 25px rgba(56, 182, 255, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            transition: transform 0.1s;
         }
+        .fab:active { transform: scale(0.92); }
+
+        .fav-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .chart-box { position: relative; margin: 20px 0; }
         .donut-chart {
-            width: 150px;
-            height: 150px;
+            width: 160px; height: 160px;
             border-radius: 50%;
-            background: conic-gradient(var(--border-color) 0% 100%);
             position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
         .donut-hole {
-            width: 90px;
-            height: 90px;
-            background-color: var(--card-bg);
+            width: 104px; height: 104px;
+            background-color: #0f1822;
             position: absolute;
-            top: 30px; left: 30px;
+            top: 28px; left: 28px;
             border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .legend-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 12px;
-            margin-top: 12px;
+
+        .status-badge {
+            font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; letter-spacing: 0.3px;
         }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .color-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        .backup-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
+        .status-badge.pending { background: rgba(255,159,26,0.12); color: var(--accent-orange); }
+        .status-badge.done { background: rgba(0,240,118,0.12); color: var(--accent-green); }
+        .status-badge.saving { background: rgba(56,182,255,0.12); color: var(--accent-blue); }
+        
+        .backup-section { display: flex; gap: 12px; margin-top: 24px; }
         .btn-backup {
-            flex: 1;
-            background-color: transparent;
-            border: 1px dashed var(--border-color);
-            color: var(--text-muted);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
+            flex: 1; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1);
+            color: var(--text-muted); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title">FinanzKompass Pro</div>
+        <div class="header-title">FinanzKompass</div>
+        <div style="font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--glass-border); font-weight: 700; color: var(--text-muted);">PRO</div>
     </header>
 
     <div class="container">
         
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
-            <button class="tab-btn" onclick="switchView('fixkosten')">Fixkosten</button>
-            <button class="tab-btn" onclick="switchView('analyse')">Analyse</button>
-        </div>
-
         <!-- VIEW: DASHBOARD -->
         <div id="view-dashboard" class="view-section active">
             <div class="main-card">
-                <div class="label" id="cycle-label">Aktueller Gehalts-Zyklus</div>
+                <div class="label" id="cycle-label">Gehalts-Zyklus</div>
                 <div class="amount" id="free-budget">0,00 €</div>
-                <div style="font-size: 13px; color: var(--text-muted);">Frei verfügbar bis zum nächsten Gehalt</div>
+                <div style="font-size: 13px; color: var(--text-muted);">Frei verfügbares Konsum-Budget</div>
             </div>
 
             <div class="stats-grid">
+                <div class="mini-card">
+                    <div class="title">Girokonto (Erwartet)</div>
+                    <div class="val blue" id="stat-real-bank">0,00 €</div>
+                </div>
+                <div class="mini-card">
+                    <div class="title">Diesen Monat gespart</div>
+                    <div class="val green" id="stat-total-saved">0,00 €</div>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="opacity: 0.75;">
                 <div class="mini-card">
                     <div class="title">Letztes Gehalt</div>
                     <div class="val green" id="stat-salary">0,00 €</div>
                 </div>
                 <div class="mini-card">
-                    <div class="title">Virtuelle Rücklagen (mtl.)</div>
+                    <div class="title">Fixkosten-Puffer</div>
                     <div class="val orange" id="stat-reserves">0,00 €</div>
                 </div>
             </div>
 
-            <div class="section-title">Spontane Ausgaben & Budgets</div>
-            <div class="card" id="budget-container"></div>
+            <div class="section-title">Budgets & Limits</div>
+            <div class="card" id="budget-container" style="padding: 18px 20px;"></div>
 
-            <div class="section-title">Letzte Buchungen</div>
-            <div class="card" id="transactions-container"></div>
+            <div class="section-title">Letzte Aktivitäten</div>
+            <div id="transactions-container"></div>
 
-            <!-- BACKUP SECTION -->
             <div class="backup-section">
-                <button class="btn-backup" onclick="exportBackup()">📥 Daten sichern</button>
-                <button class="btn-backup" onclick="importBackup()">📤 Backup laden</button>
+                <button class="btn-backup" onclick="exportBackup()">📥 Backup erstellen</button>
+                <button class="btn-backup" onclick="importBackup()">📤 Einspielen</button>
             </div>
         </div>
 
         <!-- VIEW: FIXKOSTEN -->
         <div id="view-fixkosten" class="view-section">
-            <div class="card">
-                <h3>Virtuelle Spar-Rücklagen</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">
-                    Jährliche/quartalsweise Kosten werden anteilig monatlich weggerechnet.
-                </p>
+            <div class="main-card" style="background: linear-gradient(135deg, #11251d, #0b1411); border-color: rgba(0, 240, 118, 0.2);">
+                <div class="label" style="color: var(--accent-green)">Finanz-Autopilot</div>
+                <div style="font-size: 14px; color: #ced6dd; line-height: 1.5; margin-top: 4px;">
+                    Deine Fixkosten und Sparpläne werden monatlich automatisch simuliert und mit deinem realen Kontostand abgeglichen.
+                </div>
             </div>
             
-            <div class="section-title">Fixkosten-Verwaltung</div>
-            <div class="card" id="fixkosten-container"></div>
+            <div class="section-title">Verträge & Sparpläne</div>
+            <div id="fixkosten-container"></div>
 
-            <div class="section-title">Realer Zahlungskalender (Diesen Monat fällig)</div>
-            <div class="card" id="calendar-container" style="border-color: var(--accent-orange);"></div>
+            <div class="section-title">Zahlungskalender fällig in diesem Monat</div>
+            <div class="card" id="calendar-container" style="padding: 10px 16px;"></div>
         </div>
 
         <!-- VIEW: ANALYSE -->
         <div id="view-analyse" class="view-section">
-            <div class="card" style="margin-bottom: 16px;">
-                <label style="font-size: 12px; color: var(--text-muted); display:block; margin-bottom: 6px;">Zeitraum filtern:</label>
-                <select class="form-control" id="analysis-filter" onchange="render()"></select>
+            <div class="card" style="margin-bottom: 20px;">
+                <label style="font-size: 11px; color: var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom: 6px;">Zeitraum wählen</label>
+                <select class="form-control" id="analysis-filter" onchange="render()" style="background-color: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.05);"></select>
             </div>
 
-            <div class="card" id="motivation-box" style="display:none; border-color: var(--accent-green); background: linear-gradient(to right, #16222f, #15322c);">
-                <!-- Motivationsvergleich zum Vormonat -->
-            </div>
+            <div class="card" id="motivation-box" style="display:none; border-radius: 20px;"></div>
 
-            <div class="section-title">Visuelle Verteilung</div>
-            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="section-title">Visuelle Auswertung</div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center; padding: 24px;">
                 <div class="chart-box">
                     <div class="donut-chart" id="chart-pie">
                         <div class="donut-hole"></div>
@@ -446,10 +473,19 @@
                 <div class="legend-grid" id="chart-legend" style="width: 100%;"></div>
             </div>
 
-            <div class="section-title">Ausgaben nach Kategorien</div>
-            <div class="card" id="analysis-container"></div>
+            <div class="section-title">Kategorie-Übersicht</div>
+            <div id="analysis-container"></div>
         </div>
 
+    </div>
+
+    <!-- FLOATING NAV TAB WRAPPER -->
+    <div class="nav-wrapper">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchView('fixkosten')">Fixkosten</button>
+            <button class="tab-btn" onclick="switchView('analyse')">Analyse</button>
+        </div>
     </div>
 
     <div class="fab" onclick="openModal()">+</div>
@@ -457,35 +493,42 @@
     <!-- MODAL -->
     <div class="modal" id="tx-modal">
         <div class="modal-content">
-            <button class="btn-close" onclick="closeModal()">Schließen</button>
-            <h3 style="margin-bottom: 12px;">Neue Buchung</h3>
+            <button class="btn-close" onclick="closeModal()">✕</button>
+            <h3 style="margin-bottom: 18px; font-size: 20px; font-weight: 800; letter-spacing: -0.5px;" id="modal-headline">Eintrag erfassen</h3>
             
-            <!-- Favoriten / Häufige Buchungen -->
-            <div id="fav-section" style="display:none;">
-                <label style="font-size: 11px; color: var(--text-muted); display:block; margin-bottom: 4px;">Schnellwahl-Favoriten:</label>
+            <div id="fav-section" style="display:none; margin-bottom: 14px;">
                 <div class="fav-container" id="fav-chips-box"></div>
             </div>
 
             <form id="tx-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="form-edit-id" value="">
+                
                 <div class="form-group">
-                    <label>Typ</label>
+                    <label>Buchungstyp</label>
                     <select class="form-control" id="form-type" onchange="toggleFormFields()">
                         <option value="ausgabe">Spontane Ausgabe</option>
                         <option value="gehalt">Gehaltseingang (Zyklus-Neustart)</option>
-                        <option value="fixkosten">Dauerauftrag / Fixkosten-Regel</option>
+                        <option value="fixkosten">Dauerauftrag / Fixkosten</option>
+                        <option value="sparrate">Sparrate / Investition (ETF, Depot)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Beschreibung</label>
-                    <input type="text" class="form-control" id="form-title" placeholder="z.B. REWE, Netflix, Gehalt" required>
+                    <label>Beschreibung / Händler</label>
+                    <input type="text" class="form-control" id="form-title" placeholder="z.B. REWE, Netflix, Gehalt, Trade Republic" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Betrag (€)</label>
-                        <input type="number" step="0.01" class="form-control" id="form-amount" placeholder="0.00" required>
+                        <label>Betrag in €</label>
+                        <input type="text" class="form-control" id="form-amount" placeholder="0,00" required>
                     </div>
+                    
+                    <div class="form-group" id="field-date">
+                        <label>Datum</label>
+                        <input type="date" class="form-control" id="form-date">
+                    </div>
+
                     <div class="form-group" id="field-category">
                         <label>Kategorie</label>
                         <select class="form-control" id="form-category">
@@ -494,9 +537,11 @@
                             <option value="Auto / Mobilität">Auto & Mobilität</option>
                             <option value="Wohnen">Wohnen & Energie</option>
                             <option value="Abo / Fixkosten">Abo & Fixkosten</option>
+                            <option value="Sparen / Vermögen">Sparen & Vermögen</option>
                             <option value="Sonstiges">Sonstiges</option>
                         </select>
                     </div>
+
                     <div class="form-group" id="field-interval" style="display: none;">
                         <label>Intervall</label>
                         <select class="form-control" id="form-interval">
@@ -505,78 +550,69 @@
                             <option value="12">Jährlich</option>
                         </select>
                     </div>
+                    
+                    <div class="form-group" id="field-day" style="display: none;">
+                        <label>Fälligkeitstag</label>
+                        <input type="number" min="1" max="31" class="form-control" id="form-day" placeholder="z.B. 1">
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Speichern</button>
+                <button type="submit" class="btn-submit" id="btn-submit-text">Buchung speichern</button>
             </form>
         </div>
     </div>
 
     <script>
-        let state = {
-            transactions: [], 
-            fixkosten: [],     
-            lastSalary: 0,
-            salaryDate: null,
-            cycles: [],
-            favorites: [] // Merkt sich die letzten 3 Ausgaben-Namen und Kategorien
-        };
+        let state = { transactions: [], fixkosten: [], lastSalary: 0, salaryDate: null, cycles: [], favorites: [] };
 
         const categoryColors = {
-            'Lebensmittel': '#00a8ff',
-            'Freizeit': '#00e676',
-            'Auto / Mobilität': '#ff9100',
-            'Wohnen': '#ff5252',
-            'Abo / Fixkosten': '#e040fb',
-            'Sonstiges': '#90a4ae'
+            'Lebensmittel': '#38b6ff', 'Freizeit': '#00f076', 'Auto / Mobilität': '#ff9f1a',
+            'Wohnen': '#ff4a5a', 'Abo / Fixkosten': '#e040fb', 'Sparen / Vermögen': '#00e5ff', 'Sonstiges': '#90a4ae'
         };
 
         function initData() {
             const saved = localStorage.getItem('finanzkompass_state');
             if (saved) {
                 state = JSON.parse(saved);
-                if(!state.cycles) state.cycles = [];
-                if(!state.favorites) state.favorites = [];
+                state.fixkosten.forEach(f => {
+                    if(f.day === undefined) f.day = 1;
+                    if(!f.type) f.type = 'fixkosten';
+                });
             } else {
                 state.fixkosten = [
-                    { id: 1, title: 'Miete', amount: 650, interval: 1, category: 'Wohnen' },
-                    { id: 2, title: 'GEZ', amount: 55.08, interval: 3, category: 'Abo / Fixkosten' },
-                    { id: 3, title: 'Kfz-Versicherung', amount: 360, interval: 12, category: 'Auto / Mobilität' }
+                    { id: 1, title: 'Warmmiete', amount: 680, interval: 1, category: 'Wohnen', day: 1, type: 'fixkosten' },
+                    { id: 2, title: 'GEZ Gebühr', amount: 55.08, interval: 3, category: 'Abo / Fixkosten', day: 15, type: 'fixkosten' },
+                    { id: 3, title: 'Depot Sparplan', amount: 200, interval: 1, category: 'Sparen / Vermögen', day: 5, type: 'sparrate' }
                 ];
-                let pastDate = new Date();
-                pastDate.setDate(pastDate.getDate() - 2);
-                state.salaryDate = pastDate.toISOString();
-                state.lastSalary = 2200;
-                
+                let pastDate = new Date(); pastDate.setDate(pastDate.getDate() - 3);
+                state.salaryDate = pastDate.toISOString(); state.lastSalary = 2450;
                 state.transactions = [
-                    { id: 201, title: 'Einkauf REWE', amount: 48.50, type: 'ausgabe', category: 'Lebensmittel', date: pastDate.toISOString(), cycleId: state.salaryDate }
-                ];
-                state.favorites = [
-                    { title: 'REWE', category: 'Lebensmittel' },
-                    { title: 'Kino', category: 'Freizeit' }
+                    { id: 301, title: 'Einkauf REWE', amount: 54.30, type: 'ausgabe', category: 'Lebensmittel', date: pastDate.toISOString().split('T')[0], cycleId: state.salaryDate }
                 ];
                 saveState();
             }
+            document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
             updateAnalysisFilterOptions();
-            buildFavChips();
         }
 
-        function saveState() {
-            localStorage.setItem('finanzkompass_state', JSON.stringify(state));
-        }
+        function saveState() { localStorage.setItem('finanzkompass_state', JSON.stringify(state)); }
 
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
             if(event) event.target.classList.add('active');
-            
             if(viewId === 'analyse') updateAnalysisFilterOptions();
             render();
         }
 
         function openModal() { 
-            buildFavChips();
+            document.getElementById('modal-headline').innerText = "Eintrag erfassen";
+            document.getElementById('btn-submit-text').innerText = "Buchung speichern";
+            document.getElementById('form-edit-id').value = "";
+            document.getElementById('tx-form').reset();
+            toggleFormFields(); buildFavChips();
+            document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('tx-modal').style.display = 'flex'; 
         }
         function closeModal() { document.getElementById('tx-modal').style.display = 'none'; }
@@ -584,8 +620,7 @@
         function buildFavChips() {
             const container = document.getElementById('fav-chips-box');
             if(!state.favorites || state.favorites.length === 0) {
-                document.getElementById('fav-section').style.display = 'none';
-                return;
+                document.getElementById('fav-section').style.display = 'none'; return;
             }
             document.getElementById('fav-section').style.display = 'block';
             container.innerHTML = state.favorites.map(f => `
@@ -600,170 +635,178 @@
 
         function toggleFormFields() {
             const type = document.getElementById('form-type').value;
-            if (type === 'fixkosten') {
+            if (type === 'fixkosten' || type === 'sparrate') {
                 document.getElementById('field-interval').style.display = 'block';
+                document.getElementById('field-day').style.display = 'block';
                 document.getElementById('field-category').style.display = 'block';
+                document.getElementById('field-date').style.display = 'none';
+                if(type === 'sparrate') document.getElementById('form-category').value = 'Sparen / Vermögen';
             } else if (type === 'gehalt') {
                 document.getElementById('field-interval').style.display = 'none';
+                document.getElementById('field-day').style.display = 'none';
                 document.getElementById('field-category').style.display = 'none';
+                document.getElementById('field-date').style.display = 'none';
             } else {
                 document.getElementById('field-interval').style.display = 'none';
+                document.getElementById('field-day').style.display = 'none';
                 document.getElementById('field-category').style.display = 'block';
+                document.getElementById('field-date').style.display = 'block';
             }
         }
 
         function handleFormSubmit(e) {
             e.preventDefault();
+            const editId = document.getElementById('form-edit-id').value;
             const type = document.getElementById('form-type').value;
             const title = document.getElementById('form-title').value.trim();
-            const amount = parseFloat(document.getElementById('form-amount').value);
+            let rawAmount = document.getElementById('form-amount').value.replace(',', '.');
+            const amount = parseFloat(rawAmount);
+
+            if(isNaN(amount)) { alert("Ungültiger Betrag."); return; }
+
             const category = document.getElementById('form-category').value;
             const interval = parseInt(document.getElementById('form-interval').value);
+            const fDay = parseInt(document.getElementById('form-day').value) || 1;
+            const chosenDate = document.getElementById('form-date').value;
             const nowStr = new Date().toISOString();
 
-            if (type === 'gehalt') {
-                if(state.salaryDate) {
-                    const d = new Date(state.salaryDate);
-                    const label = `Abrechnung ab ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })} ${d.getFullYear().toString().substr(-2)}`;
-                    if(!state.cycles.some(c => c.id === state.salaryDate)) {
-                        state.cycles.push({
-                            id: state.salaryDate,
-                            label: label,
-                            start: state.salaryDate,
-                            end: nowStr,
-                            salary: state.lastSalary
-                        });
-                    }
+            if(editId) {
+                if(type === 'fixkosten' || type === 'sparrate') {
+                    state.fixkosten = state.fixkosten.map(f => f.id == editId ? { id: f.id, title, amount, interval, category, day: fDay, type } : f);
                 }
-                state.lastSalary = amount;
-                state.salaryDate = nowStr;
-            } else if (type === 'fixkosten') {
-                state.fixkosten.push({ id: Date.now(), title, amount, interval, category });
             } else {
-                state.transactions.unshift({
-                    id: Date.now(), title, amount, type, category, date: nowStr, cycleId: state.salaryDate
-                });
-                // Favorit abspeichern (Maximal 3)
-                state.favorites = state.favorites.filter(f => f.title.toLowerCase() !== title.toLowerCase());
-                state.favorites.unshift({ title, category });
-                if(state.favorites.length > 3) state.favorites.pop();
+                if (type === 'gehalt') {
+                    if(state.salaryDate) {
+                        const d = new Date(state.salaryDate);
+                        const label = `Abrechnung ab ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })} ${d.getFullYear().toString().substr(-2)}`;
+                        if(!state.cycles.some(c => c.id === state.salaryDate)) {
+                            state.cycles.push({ id: state.salaryDate, label, start: state.salaryDate, end: nowStr, salary: state.lastSalary });
+                        }
+                    }
+                    state.lastSalary = amount; state.salaryDate = nowStr;
+                } else if (type === 'fixkosten' || type === 'sparrate') {
+                    state.fixkosten.push({ id: Date.now(), title, amount, interval, category, day: fDay, type });
+                } else {
+                    state.transactions.unshift({ id: Date.now(), title, amount, type, category, date: chosenDate, cycleId: state.salaryDate });
+                    state.favorites = state.favorites.filter(f => f.title.toLowerCase() !== title.toLowerCase());
+                    state.favorites.unshift({ title, category }); if(state.favorites.length > 4) state.favorites.pop();
+                }
             }
 
-            saveState();
-            updateAnalysisFilterOptions();
-            render();
-            closeModal();
-            document.getElementById('tx-form').reset();
+            saveState(); updateAnalysisFilterOptions(); render(); closeModal();
+            document.getElementById('tx-form').reset(); toggleFormFields();
+        }
+
+        function editFixkosten(id) {
+            const f = state.fixkosten.find(item => item.id === id); if(!f) return;
+            openModal();
+            document.getElementById('modal-headline').innerText = "Eintrag bearbeiten";
+            document.getElementById('btn-submit-text').innerText = "Änderungen sichern";
+            document.getElementById('form-edit-id').value = f.id;
+            document.getElementById('form-type').value = f.type || 'fixkosten';
+            document.getElementById('form-title').value = f.title;
+            document.getElementById('form-amount').value = f.amount.toFixed(2).replace('.', ',');
+            document.getElementById('form-category').value = f.category;
+            document.getElementById('form-interval').value = f.interval;
+            document.getElementById('form-day').value = f.day;
             toggleFormFields();
         }
 
-        function deleteFixkosten(id) {
-            state.fixkosten = state.fixkosten.filter(f => f.id !== id);
-            saveState();
-            render();
-        }
-
-        function deleteTransaction(id) {
-            state.transactions = state.transactions.filter(t => t.id !== id);
-            saveState();
-            render();
-        }
+        function deleteFixkosten(id) { state.fixkosten = state.fixkosten.filter(f => f.id !== id); saveState(); render(); }
+        function deleteTransaction(id) { state.transactions = state.transactions.filter(t => t.id !== id); saveState(); render(); }
 
         function updateAnalysisFilterOptions() {
-            const filterSelect = document.getElementById('analysis-filter');
-            if(!filterSelect) return;
+            const filterSelect = document.getElementById('analysis-filter'); if(!filterSelect) return;
             let html = '<option value="current">Aktueller Zyklus</option>';
-            state.cycles.slice().reverse().forEach(c => {
-                html += `<option value="${c.id}">${c.label}</option>`;
-            });
+            state.cycles.slice().reverse().forEach(c => { html += `<option value="${c.id}">${c.label}</option>`; });
             filterSelect.innerHTML = html;
         }
 
-        // BACKUP SYSTEM FUNCTIONS
         function exportBackup() {
-            const dataStr = JSON.stringify(state);
-            const token = btoa(unescape(encodeURIComponent(dataStr))); 
-            navigator.clipboard.writeText(token).then(() => {
-                alert("Backup-Code kopiert! Speichere diesen Text einfach in deinen Notizen ab.");
-            }).catch(() => {
-                alert("Fehler beim Kopieren. Hier ist dein Code:\n\n" + token);
-            });
+            const token = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+            navigator.clipboard.writeText(token).then(() => { alert("Backup-Schlüssel kopiert!"); });
         }
 
         function importBackup() {
-            const code = prompt("Füge deinen kopierten Backup-Code hier ein:");
-            if(!code) return;
-            try {
-                const decoded = decodeURIComponent(escape(atob(code)));
-                const parsed = JSON.parse(decoded);
-                if(parsed.transactions && parsed.fixkosten) {
-                    state = parsed;
-                    saveState();
-                    updateAnalysisFilterOptions();
-                    render();
-                    alert("Backup erfolgreich geladen!");
-                } else {
-                    alert("Ungültiger Code.");
-                }
-            } catch(e) {
-                alert("Fehler beim Importieren des Backups.");
-            }
+            const code = prompt("Backup-Code einfügen:"); if(!code) return;
+            try { state = JSON.parse(decodeURIComponent(escape(atob(code)))); saveState(); render(); alert("Erfolgreich!"); } catch(e) { alert("Fehler."); }
         }
 
         function render() {
-            // --- COMPUTATIONS DASHBOARD ---
-            let totalMonthlyFixkosten = 0;
-            state.fixkosten.forEach(f => { totalMonthlyFixkosten += (f.amount / f.interval); });
+            let todayDayNum = new Date().getDate(); let currentMonthNum = new Date().getMonth();
+            let totalMonthlyFixkostenReserves = 0; let totalMonthlySparraten = 0;
+            
+            state.fixkosten.forEach(f => { 
+                if(f.type === 'sparrate') { totalMonthlySparraten += (f.amount / f.interval); } 
+                else { totalMonthlyFixkostenReserves += (f.amount / f.interval); }
+            });
 
             let currentTx = state.transactions.filter(t => t.cycleId === state.salaryDate);
-            let totalSpontaneous = 0;
-            currentTx.forEach(t => { if(t.type === 'ausgabe') totalSpontaneous += t.amount; });
+            let totalSpontaneous = 0; currentTx.forEach(t => { if(t.type === 'ausgabe') totalSpontaneous += t.amount; });
 
-            let freeBudget = state.lastSalary - totalMonthlyFixkosten - totalSpontaneous;
+            let freeBudget = state.lastSalary - totalMonthlyFixkostenReserves - totalMonthlySparraten - totalSpontaneous;
+
+            let realAbgebuchteKostenBisHeute = 0;
+            state.fixkosten.forEach(f => {
+                let targetDay = f.day || 1; let isTriggered = false;
+                if(f.interval === 1 && todayDayNum >= targetDay) isTriggered = true;
+                if(f.interval === 3 && currentMonthNum % 3 === 0 && todayDayNum >= targetDay) isTriggered = true;
+                if(f.interval === 12 && currentMonthNum === 11 && todayDayNum >= targetDay) isTriggered = true;
+                if(isTriggered) realAbgebuchteKostenBisHeute += f.amount;
+            });
+            let expectedBankBalance = state.lastSalary - realAbgebuchteKostenBisHeute - totalSpontaneous;
 
             document.getElementById('free-budget').innerText = freeBudget.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('stat-real-bank').innerText = expectedBankBalance.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('stat-total-saved').innerText = totalMonthlySparraten.toFixed(2).replace('.', ',') + ' €';
             document.getElementById('stat-salary').innerText = state.lastSalary.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('stat-reserves').innerText = totalMonthlyFixkosten.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('stat-reserves').innerText = totalMonthlyFixkostenReserves.toFixed(2).replace('.', ',') + ' €';
             
             if (state.salaryDate) {
                 const d = new Date(state.salaryDate);
-                document.getElementById('cycle-label').innerText = `Zyklus seit: ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })}`;
+                document.getElementById('cycle-label').innerText = `Verfügbar seit: ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })}`;
             }
 
-            // Render Dashboard Transactions
+            // Render Premium Transaction Rows
             const txContainer = document.getElementById('transactions-container');
             if(currentTx.length === 0) {
-                txContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Ausgaben erfasst.</p>';
+                txContainer.innerHTML = '<div class="card"><p style="color:var(--text-muted); font-size:14px; text-align:center;">Keine Ausgaben erfasst.</p></div>';
             } else {
-                txContainer.innerHTML = currentTx.map(t => `
-                    <div class="list-item">
-                        <div class="item-info">
-                            <div class="name">${t.title}</div>
-                            <div class="sub">${t.category}</div>
+                txContainer.innerHTML = currentTx.map(t => {
+                    let fDate = t.date; if(t.date) { const p = t.date.split('-'); if(p.length === 3) fDate = `${p[2]}.${p[1]}.`; }
+                    return `
+                        <div class="list-row">
+                            <div class="item-info">
+                                <div class="name">${t.title} <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">(${fDate})</span></div>
+                                <div class="sub">${t.category}</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:14px;">
+                                <div class="item-amount" style="color: var(--accent-red);">- ${t.amount.toFixed(2).replace('.', ',')} €</div>
+                                <button class="btn-small" style="color:var(--text-muted); font-size:16px;" onclick="deleteTransaction(${t.id})">✕</button>
+                            </div>
                         </div>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div class="item-amount" style="color: var(--accent-red);">- ${t.amount.toFixed(2).replace('.', ',')} €</div>
-                            <button class="btn-small" style="color:var(--text-muted);" onclick="deleteTransaction(${t.id})">✕</button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
-            // Render Fixkosten Liste
+            // Render Fixkosten Liste (Premium)
             const fixContainer = document.getElementById('fixkosten-container');
             if(state.fixkosten.length === 0) {
-                fixContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Fixkosten hinterlegt.</p>';
+                fixContainer.innerHTML = '<div class="card"><p style="color:var(--text-muted); font-size:14px; text-align:center;">Keine Einträge vorhanden.</p></div>';
             } else {
                 fixContainer.innerHTML = state.fixkosten.map(f => {
                     let iv = f.interval === 1 ? 'mtl.' : (f.interval === 3 ? '3-mtl.' : 'jährlich');
+                    let clr = f.type === 'sparrate' ? 'var(--accent-green)' : 'var(--accent-blue)';
+                    let pre = f.type === 'sparrate' ? '📈 ' : '📄 ';
                     return `
-                        <div class="list-item">
+                        <div class="list-row" style="border-left: 3px solid ${clr}">
                             <div class="item-info">
-                                <div class="name">${f.title} <span style="font-size:11px; color:var(--accent-orange)">(${iv})</span></div>
-                                <div class="sub">Voll: ${f.amount.toFixed(2)} € | Anteil: ${(f.amount/f.interval).toFixed(2)} €</div>
+                                <div class="name">${pre}${f.title} <span style="font-size:11px; color:var(--text-muted);">(${iv})</span></div>
+                                <div class="sub">Fällig: Tag ${f.day} | Anteil: ${(f.amount/f.interval).toFixed(2)} €</div>
                             </div>
-                            <div style="display:flex; align-items:center; gap: 10px;">
-                                <div class="item-amount" style="color: var(--text-muted);">${(f.amount/f.interval).toFixed(2)} €</div>
+                            <div style="display:flex; align-items:center; gap: 14px;">
+                                <div class="item-amount" style="color: var(--text-color);">${(f.amount/f.interval).toFixed(2)} €</div>
+                                <button class="btn-small" onclick="editFixkosten(${f.id})">✏️</button>
                                 <button class="btn-small" style="color:var(--accent-red);" onclick="deleteFixkosten(${f.id})">✕</button>
                             </div>
                         </div>
@@ -771,140 +814,114 @@
                 }).join('');
             }
 
-            // Realer Zahlungskalender (Was geht DIESEN Monat real weg)
+            // Zahlungskalender (Premium Style)
             const calContainer = document.getElementById('calendar-container');
-            let currentMonthNum = new Date(state.salaryDate || new Date()).getMonth(); 
             let realCalendarItems = state.fixkosten.filter(f => {
-                if(f.interval === 1) return true; // Monatlich bucht immer ab
-                if(f.interval === 3 && currentMonthNum % 3 === 0) return true; // Beispielrechnung Quartal
-                if(f.interval === 12 && currentMonthNum === 11) return true; // Jährlich im Dezember simulieren
+                if(f.interval === 1) return true;
+                if(f.interval === 3 && currentMonthNum % 3 === 0) return true;
+                if(f.interval === 12 && currentMonthNum === 11) return true;
                 return false;
             });
 
             if(realCalendarItems.length === 0) {
-                calContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Diesen Monat stehen keine realen Abbuchungen an.</p>';
+                calContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px; text-align:center;">Keine Fälligkeiten.</p>';
             } else {
-                calContainer.innerHTML = realCalendarItems.map(f => `
-                    <div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0;">
-                        <span>💸 ${f.title} <span style="color:var(--text-muted); font-size:12px;">(${f.category})</span></span>
-                        <span style="font-weight:600; color:var(--accent-red);">${f.amount.toFixed(2)} €</span>
-                    </div>
-                `).join('');
+                realCalendarItems.sort((a,b) => (a.day || 1) - (b.day || 1));
+                calContainer.innerHTML = realCalendarItems.map(f => {
+                    let targetDay = f.day || 1; let isDone = todayDayNum >= targetDay;
+                    let bClass = isDone ? 'done' : (f.type === 'sparrate' ? 'saving' : 'pending');
+                    let bText = isDone ? 'Abgebucht' : (f.type === 'sparrate' ? 'Wird gespart' : 'Steht an');
+                    return `
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px; padding:10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); opacity: ${isDone ? 0.4 : 1};">
+                            <div>
+                                <span style="font-weight:600;">${f.title}</span>
+                                <div style="font-size:11px; color:var(--text-muted);">Fällig am ${targetDay}.</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="font-weight:700; color:var(--text-color);">${f.amount.toFixed(2)} €</span>
+                                <span class="status-badge ${bClass}">${bText}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
-            // Render Dashboard Budget-Progress
+            // Budget-Progressbars (Premium Style)
             const budgetContainer = document.getElementById('budget-container');
-            const mainCategories = ['Lebensmittel', 'Freizeit', 'Auto / Mobilität', 'Wohnen', 'Abo / Fixkosten', 'Sonstiges'];
-            const defaultLimits = { 'Lebensmittel': 300, 'Freizeit': 200, 'Auto / Mobilität': 150 };
+            const mainCategories = ['Lebensmittel', 'Freizeit', 'Auto / Mobilität', 'Wohnen', 'Abo / Fixkosten', 'Sparen / Vermögen', 'Sonstiges'];
+            const defaultLimits = { 'Lebensmittel': 350, 'Freizeit': 200, 'Auto / Mobilität': 150 };
             let budgetHtml = '';
             
             mainCategories.forEach(cat => {
-                let spent = 0;
-                currentTx.forEach(t => { if(t.category === cat) spent += t.amount; });
+                let spent = 0; currentTx.forEach(t => { if(t.category === cat) spent += t.amount; });
                 if (spent > 0 || defaultLimits[cat]) {
-                    let lim = defaultLimits[cat] || 150;
-                    let pct = Math.min((spent / lim) * 100, 100);
+                    let lim = defaultLimits[cat] || 150; let pct = Math.min((spent / lim) * 100, 100);
                     budgetHtml += `
                         <div class="budget-row">
-                            <div class="budget-meta"><span>${cat}</span><span>${spent.toFixed(2)} € / ${lim} €</span></div>
-                            <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--accent-red)' : categoryColors[cat]}"></div></div>
+                            <div class="budget-meta">
+                                <span style="font-weight:600; font-size:13px;">${cat}</span>
+                                <span style="color:var(--text-muted); font-size:12px;"><b style="color:#fff">${spent.toFixed(0)} €</b> / ${lim} €</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${pct}%; background: linear-gradient(90deg, ${categoryColors[cat]}, #fff);"></div>
+                            </div>
                         </div>
                     `;
                 }
             });
             budgetContainer.innerHTML = budgetHtml;
 
-            // --- REITER ANALYSE & PIE CHART ---
+            // --- VIEW: ANALYSE & DIAGRAMM ---
             const analysisContainer = document.getElementById('analysis-container');
             const filterVal = document.getElementById('analysis-filter') ? document.getElementById('analysis-filter').value : 'current';
-            
-            let analysisTx = [];
-            if (filterVal === 'current') {
-                analysisTx = state.transactions.filter(t => t.cycleId === state.salaryDate);
-            } else {
-                analysisTx = state.transactions.filter(t => t.cycleId === filterVal);
-            }
+            let analysisTx = (filterVal === 'current') ? state.transactions.filter(t => t.cycleId === state.salaryDate) : state.transactions.filter(t => t.cycleId === filterVal);
 
-            let catTotals = {};
-            let grandTotal = 0;
-            analysisTx.forEach(t => {
-                catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
-                grandTotal += t.amount;
-            });
-            // Fixkosten anteilig dazurechnen
-            state.fixkosten.forEach(f => {
-                catTotals[f.category] = (catTotals[f.category] || 0) + (f.amount / f.interval);
-                grandTotal += (f.amount / f.interval);
-            });
+            let catTotals = {}; let grandTotal = 0;
+            analysisTx.forEach(t => { catTotals[t.category] = (catTotals[t.category] || 0) + t.amount; grandTotal += t.amount; });
+            state.fixkosten.forEach(f => { catTotals[f.category] = (catTotals[f.category] || 0) + (f.amount / f.interval); grandTotal += (f.amount / f.interval); });
 
-            // Vormonats-Vergleich Motivation Box
             const motBox = document.getElementById('motivation-box');
             if(filterVal === 'current' && state.cycles.length > 0) {
-                motBox.style.display = 'block';
-                // Berechne Durchschnitt vergangener Zyklen
-                let historicalTotalSum = 0;
+                motBox.style.display = 'block'; let histSum = 0;
                 state.cycles.forEach(c => {
-                    let pastTx = state.transactions.filter(t => t.cycleId === c.id);
-                    pastTx.forEach(t => historicalTotalSum += t.amount);
-                    state.fixkosten.forEach(f => historicalTotalSum += (f.amount / f.interval));
+                    state.transactions.filter(t => t.cycleId === c.id).forEach(t => histSum += t.amount);
+                    state.fixkosten.forEach(f => histSum += (f.amount / f.interval));
                 });
-                let avgPastSpend = historicalTotalSum / state.cycles.length;
-                let difference = avgPastSpend - grandTotal;
-                
-                if(difference >= 0) {
-                    motBox.innerHTML = `<h4 style="color:var(--accent-green)">💪 Starker Sparmodus!</h4><p style="font-size:13px; margin-top:4px;">Du hast in diesem Zyklus bisher <b>${difference.toFixed(2)} € weniger</b> ausgegeben als im Schnitt der Vormonate!</p>`;
-                    motBox.style.borderColor = 'var(--accent-green)';
+                let avgPast = histSum / state.cycles.length; let diff = avgPast - grandTotal;
+                if(diff >= 0) {
+                    motBox.innerHTML = `<h4 style="color:var(--accent-green)">💪 Sparmodus aktiv!</h4><p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Du liegst aktuell <b style="color:#fff">${diff.toFixed(2)} €</b> unter deinem historischen Schnitt.</p>`;
+                    motBox.style.border = '1px solid rgba(0, 240, 118, 0.2)'; motBox.style.background = 'rgba(0, 240, 118, 0.03)';
                 } else {
-                    motBox.innerHTML = `<h4 style="color:var(--accent-orange)">⚠️ Budget-Achtung</h4><p style="font-size:13px; margin-top:4px;">Du liegst aktuell <b>${Math.abs(difference).toFixed(2)} € über</b> deinem historischen Monatsdurchschnitt.</p>`;
-                    motBox.style.borderColor = 'var(--accent-orange)';
+                    motBox.innerHTML = `<h4 style="color:var(--accent-orange)">⚠️ Höhere Ausgaben</h4><p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Du bist aktuell <b style="color:#fff">${Math.abs(diff).toFixed(2)} €</b> über dem Schnitt.</p>`;
+                    motBox.style.border = '1px solid rgba(255, 159, 26, 0.2)'; motBox.style.background = 'rgba(255, 159, 26, 0.03)';
                 }
-            } else {
-                if(motBox) motBox.style.display = 'none';
-            }
+            } else { if(motBox) motBox.style.display = 'none'; }
 
-            // Render Text-Analyse
             if(grandTotal === 0) {
-                analysisContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Daten vorhanden.</p>';
+                analysisContainer.innerHTML = '<div class="card"><p style="color:var(--text-muted); text-align:center;">Keine Daten vorhanden.</p></div>';
                 document.getElementById('chart-pie').style.background = `conic-gradient(var(--border-color) 0% 100%)`;
                 document.getElementById('chart-legend').innerHTML = '';
             } else {
                 analysisContainer.innerHTML = Object.keys(catTotals).map(cat => `
-                    <div class="list-item">
+                    <div class="list-row">
                         <div class="item-info"><div class="name">${cat}</div><div class="sub">Gesamtbelastung</div></div>
-                        <div class="item-amount">${catTotals[cat].toFixed(2).replace('.', ',')} €</div>
+                        <div class="item-amount" style="color:#fff">${catTotals[cat].toFixed(2).replace('.', ',')} €</div>
                     </div>
                 `).join('');
 
-                // Render Conic Gradient (Donut Chart)
-                let gradientParts = [];
-                let currentPercent = 0;
-                let legendHtml = '';
-
-                Object.keys(catTotals).forEach(cat => {
-                    let val = catTotals[cat];
-                    let pct = (val / grandTotal) * 100;
-                    let color = categoryColors[cat] || '#fff';
-                    
+                let gradientParts = []; let currentPercent = 0; let legendHtml = '';
+                Object.keys(catTotals).sort((a,b) => catTotals[b] - catTotals[a]).forEach(cat => {
+                    let pct = (catTotals[cat] / grandTotal) * 100; let color = categoryColors[cat] || '#fff';
                     gradientParts.push(`${color} ${currentPercent}% ${currentPercent + pct}%`);
                     currentPercent += pct;
-
-                    legendHtml += `
-                        <div class="legend-item">
-                            <div class="color-dot" style="background-color:${color}"></div>
-                            <span>${cat} (${pct.toFixed(0)}%)</span>
-                        </div>
-                    `;
+                    legendHtml += `<div class="legend-item"><div class="color-dot" style="background-color:${color}"></div><span>${cat} (${pct.toFixed(0)}%)</span></div>`;
                 });
-
                 document.getElementById('chart-pie').style.background = `conic-gradient(${gradientParts.join(', ')})`;
                 document.getElementById('chart-legend').innerHTML = legendHtml;
             }
         }
 
-        window.onload = function() {
-            initData();
-            render();
-        };
+        window.onload = function() { initData(); render(); };
     </script>
 </body>
 </html>
