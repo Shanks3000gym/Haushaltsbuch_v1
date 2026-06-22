@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinanzKompass - Haushaltsbuch</title>
+    <title>FinanzKompass v1.2 Pro</title>
     <style>
         :root {
             --bg-color: #0d131a;
@@ -28,7 +28,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding-bottom: 80px;
+            padding-bottom: 90px;
             font-size: 16px;
         }
 
@@ -291,22 +291,93 @@
         .view-section.active {
             display: block;
         }
+
+        /* Neue Features v1.2 Pro */
+        .fav-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .fav-chip {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent-blue);
+            cursor: pointer;
+        }
+        .chart-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 16px 0;
+        }
+        .donut-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--border-color) 0% 100%);
+            position: relative;
+        }
+        .donut-hole {
+            width: 90px;
+            height: 90px;
+            background-color: var(--card-bg);
+            position: absolute;
+            top: 30px; left: 30px;
+            border-radius: 50%;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            margin-top: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .backup-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn-backup {
+            flex: 1;
+            background-color: transparent;
+            border: 1px dashed var(--border-color);
+            color: var(--text-muted);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title">FinanzKompass</div>
+        <div class="header-title">FinanzKompass Pro</div>
     </header>
 
     <div class="container">
         
         <div class="tabs">
             <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
-            <button class="tab-btn" onclick="switchView('fixkosten')">Fixkosten & Rücklagen</button>
+            <button class="tab-btn" onclick="switchView('fixkosten')">Fixkosten</button>
             <button class="tab-btn" onclick="switchView('analyse')">Analyse</button>
         </div>
 
+        <!-- VIEW: DASHBOARD -->
         <div id="view-dashboard" class="view-section active">
             <div class="main-card">
                 <div class="label" id="cycle-label">Aktueller Gehalts-Zyklus</div>
@@ -330,21 +401,51 @@
 
             <div class="section-title">Letzte Buchungen</div>
             <div class="card" id="transactions-container"></div>
+
+            <!-- BACKUP SECTION -->
+            <div class="backup-section">
+                <button class="btn-backup" onclick="exportBackup()">📥 Daten sichern</button>
+                <button class="btn-backup" onclick="importBackup()">📤 Backup laden</button>
+            </div>
         </div>
 
+        <!-- VIEW: FIXKOSTEN -->
         <div id="view-fixkosten" class="view-section">
             <div class="card">
-                <h3>Was sind virtuelle Rücklagen?</h3>
+                <h3>Virtuelle Spar-Rücklagen</h3>
                 <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">
-                    Trage hier auch Verträge ein, die <b>vierteljährlich</b> oder <b>jährlich</b> abgebucht werden. Die App rechnet diese automatisch auf den Monat herunter und zieht sie sofort am Gehaltstag vom "frei verfügbaren Budget" ab. So sparst du jeden Monat unbemerkt dafür an!
+                    Jährliche/quartalsweise Kosten werden anteilig monatlich weggerechnet.
                 </p>
             </div>
             
-            <div class="section-title">Fixkosten & Abos verwalten</div>
+            <div class="section-title">Fixkosten-Verwaltung</div>
             <div class="card" id="fixkosten-container"></div>
+
+            <div class="section-title">Realer Zahlungskalender (Diesen Monat fällig)</div>
+            <div class="card" id="calendar-container" style="border-color: var(--accent-orange);"></div>
         </div>
 
+        <!-- VIEW: ANALYSE -->
         <div id="view-analyse" class="view-section">
+            <div class="card" style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-muted); display:block; margin-bottom: 6px;">Zeitraum filtern:</label>
+                <select class="form-control" id="analysis-filter" onchange="render()"></select>
+            </div>
+
+            <div class="card" id="motivation-box" style="display:none; border-color: var(--accent-green); background: linear-gradient(to right, #16222f, #15322c);">
+                <!-- Motivationsvergleich zum Vormonat -->
+            </div>
+
+            <div class="section-title">Visuelle Verteilung</div>
+            <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                <div class="chart-box">
+                    <div class="donut-chart" id="chart-pie">
+                        <div class="donut-hole"></div>
+                    </div>
+                </div>
+                <div class="legend-grid" id="chart-legend" style="width: 100%;"></div>
+            </div>
+
             <div class="section-title">Ausgaben nach Kategorien</div>
             <div class="card" id="analysis-container"></div>
         </div>
@@ -353,11 +454,18 @@
 
     <div class="fab" onclick="openModal()">+</div>
 
+    <!-- MODAL -->
     <div class="modal" id="tx-modal">
         <div class="modal-content">
             <button class="btn-close" onclick="closeModal()">Schließen</button>
-            <h3 style="margin-bottom: 16px;">Neue Buchung erfassen</h3>
+            <h3 style="margin-bottom: 12px;">Neue Buchung</h3>
             
+            <!-- Favoriten / Häufige Buchungen -->
+            <div id="fav-section" style="display:none;">
+                <label style="font-size: 11px; color: var(--text-muted); display:block; margin-bottom: 4px;">Schnellwahl-Favoriten:</label>
+                <div class="fav-container" id="fav-chips-box"></div>
+            </div>
+
             <form id="tx-form" onsubmit="handleFormSubmit(event)">
                 <div class="form-group">
                     <label>Typ</label>
@@ -369,7 +477,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Titel / Beschreibung</label>
+                    <label>Beschreibung</label>
                     <input type="text" class="form-control" id="form-title" placeholder="z.B. REWE, Netflix, Gehalt" required>
                 </div>
 
@@ -399,7 +507,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Buchung speichern</button>
+                <button type="submit" class="btn-submit">Speichern</button>
             </form>
         </div>
     </div>
@@ -409,26 +517,48 @@
             transactions: [], 
             fixkosten: [],     
             lastSalary: 0,
-            salaryDate: null
+            salaryDate: null,
+            cycles: [],
+            favorites: [] // Merkt sich die letzten 3 Ausgaben-Namen und Kategorien
+        };
+
+        const categoryColors = {
+            'Lebensmittel': '#00a8ff',
+            'Freizeit': '#00e676',
+            'Auto / Mobilität': '#ff9100',
+            'Wohnen': '#ff5252',
+            'Abo / Fixkosten': '#e040fb',
+            'Sonstiges': '#90a4ae'
         };
 
         function initData() {
             const saved = localStorage.getItem('finanzkompass_state');
             if (saved) {
                 state = JSON.parse(saved);
+                if(!state.cycles) state.cycles = [];
+                if(!state.favorites) state.favorites = [];
             } else {
                 state.fixkosten = [
                     { id: 1, title: 'Miete', amount: 650, interval: 1, category: 'Wohnen' },
                     { id: 2, title: 'GEZ', amount: 55.08, interval: 3, category: 'Abo / Fixkosten' },
                     { id: 3, title: 'Kfz-Versicherung', amount: 360, interval: 12, category: 'Auto / Mobilität' }
                 ];
+                let pastDate = new Date();
+                pastDate.setDate(pastDate.getDate() - 2);
+                state.salaryDate = pastDate.toISOString();
+                state.lastSalary = 2200;
+                
                 state.transactions = [
-                    { title: 'Einkauf REWE', amount: 45.20, type: 'ausgabe', category: 'Lebensmittel', date: new Date().toISOString() }
+                    { id: 201, title: 'Einkauf REWE', amount: 48.50, type: 'ausgabe', category: 'Lebensmittel', date: pastDate.toISOString(), cycleId: state.salaryDate }
                 ];
-                state.lastSalary = 2100;
-                state.salaryDate = new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(); 
+                state.favorites = [
+                    { title: 'REWE', category: 'Lebensmittel' },
+                    { title: 'Kino', category: 'Freizeit' }
+                ];
                 saveState();
             }
+            updateAnalysisFilterOptions();
+            buildFavChips();
         }
 
         function saveState() {
@@ -438,15 +568,36 @@
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById('view-' + viewId).classList.add('active');
-            event.target.classList.add('active');
+            if(event) event.target.classList.add('active');
+            
+            if(viewId === 'analyse') updateAnalysisFilterOptions();
             render();
         }
 
-        function openModal() { document.getElementById('tx-modal').style.display = 'flex'; }
+        function openModal() { 
+            buildFavChips();
+            document.getElementById('tx-modal').style.display = 'flex'; 
+        }
         function closeModal() { document.getElementById('tx-modal').style.display = 'none'; }
         
+        function buildFavChips() {
+            const container = document.getElementById('fav-chips-box');
+            if(!state.favorites || state.favorites.length === 0) {
+                document.getElementById('fav-section').style.display = 'none';
+                return;
+            }
+            document.getElementById('fav-section').style.display = 'block';
+            container.innerHTML = state.favorites.map(f => `
+                <div class="fav-chip" onclick="applyFav('${f.title}', '${f.category}')">${f.title}</div>
+            `).join('');
+        }
+
+        function applyFav(title, category) {
+            document.getElementById('form-title').value = title;
+            document.getElementById('form-category').value = category;
+        }
+
         function toggleFormFields() {
             const type = document.getElementById('form-type').value;
             if (type === 'fixkosten') {
@@ -464,34 +615,42 @@
         function handleFormSubmit(e) {
             e.preventDefault();
             const type = document.getElementById('form-type').value;
-            const title = document.getElementById('form-title').value;
+            const title = document.getElementById('form-title').value.trim();
             const amount = parseFloat(document.getElementById('form-amount').value);
             const category = document.getElementById('form-category').value;
             const interval = parseInt(document.getElementById('form-interval').value);
+            const nowStr = new Date().toISOString();
 
             if (type === 'gehalt') {
+                if(state.salaryDate) {
+                    const d = new Date(state.salaryDate);
+                    const label = `Abrechnung ab ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })} ${d.getFullYear().toString().substr(-2)}`;
+                    if(!state.cycles.some(c => c.id === state.salaryDate)) {
+                        state.cycles.push({
+                            id: state.salaryDate,
+                            label: label,
+                            start: state.salaryDate,
+                            end: nowStr,
+                            salary: state.lastSalary
+                        });
+                    }
+                }
                 state.lastSalary = amount;
-                state.salaryDate = new Date().toISOString();
-                state.transactions = []; 
+                state.salaryDate = nowStr;
             } else if (type === 'fixkosten') {
-                state.fixkosten.push({
-                    id: Date.now(),
-                    title,
-                    amount,
-                    interval,
-                    category
-                });
+                state.fixkosten.push({ id: Date.now(), title, amount, interval, category });
             } else {
                 state.transactions.unshift({
-                    title,
-                    amount,
-                    type,
-                    category,
-                    date: new Date().toISOString()
+                    id: Date.now(), title, amount, type, category, date: nowStr, cycleId: state.salaryDate
                 });
+                // Favorit abspeichern (Maximal 3)
+                state.favorites = state.favorites.filter(f => f.title.toLowerCase() !== title.toLowerCase());
+                state.favorites.unshift({ title, category });
+                if(state.favorites.length > 3) state.favorites.pop();
             }
 
             saveState();
+            updateAnalysisFilterOptions();
             render();
             closeModal();
             document.getElementById('tx-form').reset();
@@ -504,16 +663,61 @@
             render();
         }
 
-        function render() {
-            let totalMonthlyFixkosten = 0;
-            state.fixkosten.forEach(f => {
-                totalMonthlyFixkosten += (f.amount / f.interval);
-            });
+        function deleteTransaction(id) {
+            state.transactions = state.transactions.filter(t => t.id !== id);
+            saveState();
+            render();
+        }
 
-            let totalSpontaneous = 0;
-            state.transactions.forEach(t => {
-                if(t.type === 'ausgabe') totalSpontaneous += t.amount;
+        function updateAnalysisFilterOptions() {
+            const filterSelect = document.getElementById('analysis-filter');
+            if(!filterSelect) return;
+            let html = '<option value="current">Aktueller Zyklus</option>';
+            state.cycles.slice().reverse().forEach(c => {
+                html += `<option value="${c.id}">${c.label}</option>`;
             });
+            filterSelect.innerHTML = html;
+        }
+
+        // BACKUP SYSTEM FUNCTIONS
+        function exportBackup() {
+            const dataStr = JSON.stringify(state);
+            const token = btoa(unescape(encodeURIComponent(dataStr))); 
+            navigator.clipboard.writeText(token).then(() => {
+                alert("Backup-Code kopiert! Speichere diesen Text einfach in deinen Notizen ab.");
+            }).catch(() => {
+                alert("Fehler beim Kopieren. Hier ist dein Code:\n\n" + token);
+            });
+        }
+
+        function importBackup() {
+            const code = prompt("Füge deinen kopierten Backup-Code hier ein:");
+            if(!code) return;
+            try {
+                const decoded = decodeURIComponent(escape(atob(code)));
+                const parsed = JSON.parse(decoded);
+                if(parsed.transactions && parsed.fixkosten) {
+                    state = parsed;
+                    saveState();
+                    updateAnalysisFilterOptions();
+                    render();
+                    alert("Backup erfolgreich geladen!");
+                } else {
+                    alert("Ungültiger Code.");
+                }
+            } catch(e) {
+                alert("Fehler beim Importieren des Backups.");
+            }
+        }
+
+        function render() {
+            // --- COMPUTATIONS DASHBOARD ---
+            let totalMonthlyFixkosten = 0;
+            state.fixkosten.forEach(f => { totalMonthlyFixkosten += (f.amount / f.interval); });
+
+            let currentTx = state.transactions.filter(t => t.cycleId === state.salaryDate);
+            let totalSpontaneous = 0;
+            currentTx.forEach(t => { if(t.type === 'ausgabe') totalSpontaneous += t.amount; });
 
             let freeBudget = state.lastSalary - totalMonthlyFixkosten - totalSpontaneous;
 
@@ -526,40 +730,40 @@
                 document.getElementById('cycle-label').innerText = `Zyklus seit: ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })}`;
             }
 
+            // Render Dashboard Transactions
             const txContainer = document.getElementById('transactions-container');
-            if(state.transactions.length === 0) {
-                txContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Noch keine Ausgaben in diesem Zyklus erfasst.</p>';
+            if(currentTx.length === 0) {
+                txContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Ausgaben erfasst.</p>';
             } else {
-                txContainer.innerHTML = state.transactions.map(t => `
+                txContainer.innerHTML = currentTx.map(t => `
                     <div class="list-item">
                         <div class="item-info">
                             <div class="name">${t.title}</div>
                             <div class="sub">${t.category}</div>
                         </div>
-                        <div class="item-amount" style="color: var(--accent-red);">- ${t.amount.toFixed(2).replace('.', ',')} €</div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="item-amount" style="color: var(--accent-red);">- ${t.amount.toFixed(2).replace('.', ',')} €</div>
+                            <button class="btn-small" style="color:var(--text-muted);" onclick="deleteTransaction(${t.id})">✕</button>
+                        </div>
                     </div>
                 `).join('');
             }
 
+            // Render Fixkosten Liste
             const fixContainer = document.getElementById('fixkosten-container');
             if(state.fixkosten.length === 0) {
                 fixContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Fixkosten hinterlegt.</p>';
             } else {
                 fixContainer.innerHTML = state.fixkosten.map(f => {
-                    let intervalText = 'mtl.';
-                    if(f.interval === 3) intervalText = 'alle 3 Monate';
-                    if(f.interval === 12) intervalText = 'jährlich';
-                    
-                    let anteil = f.amount / f.interval;
-
+                    let iv = f.interval === 1 ? 'mtl.' : (f.interval === 3 ? '3-mtl.' : 'jährlich');
                     return `
                         <div class="list-item">
                             <div class="item-info">
-                                <div class="name">${f.title} <span style="font-size:11px; color:var(--accent-orange)">(${intervalText})</span></div>
-                                <div class="sub">Realer Abzug: ${f.amount.toFixed(2)} € | Monatlicher Anteil: ${anteil.toFixed(2)} €</div>
+                                <div class="name">${f.title} <span style="font-size:11px; color:var(--accent-orange)">(${iv})</span></div>
+                                <div class="sub">Voll: ${f.amount.toFixed(2)} € | Anteil: ${(f.amount/f.interval).toFixed(2)} €</div>
                             </div>
                             <div style="display:flex; align-items:center; gap: 10px;">
-                                <div class="item-amount" style="color: var(--text-muted);">${anteil.toFixed(2)} €/Mtl.</div>
+                                <div class="item-amount" style="color: var(--text-muted);">${(f.amount/f.interval).toFixed(2)} €</div>
                                 <button class="btn-small" style="color:var(--accent-red);" onclick="deleteFixkosten(${f.id})">✕</button>
                             </div>
                         </div>
@@ -567,54 +771,133 @@
                 }).join('');
             }
 
-            const budgetContainer = document.getElementById('budget-container');
-            const categories = ['Lebensmittel', 'Freizeit', 'Auto / Mobilität'];
-            const limits = { 'Lebensmittel': 300, 'Freizeit': 200, 'Auto / Mobilität': 150 };
-            
-            let budgetHtml = '';
-            categories.forEach(cat => {
-                let spent = 0;
-                state.transactions.forEach(t => {
-                    if(t.category === cat) spent += t.amount;
-                });
-                let limit = limits[cat] || 100;
-                let pct = Math.min((spent / limit) * 100, 100);
-                
-                budgetHtml += `
-                    <div class="budget-row">
-                        <div class="budget-meta">
-                            <span>${cat}</span>
-                            <span>${spent.toFixed(2)} € / ${limit} €</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--accent-red)' : 'var(--accent-blue)'}"></div>
-                        </div>
+            // Realer Zahlungskalender (Was geht DIESEN Monat real weg)
+            const calContainer = document.getElementById('calendar-container');
+            let currentMonthNum = new Date(state.salaryDate || new Date()).getMonth(); 
+            let realCalendarItems = state.fixkosten.filter(f => {
+                if(f.interval === 1) return true; // Monatlich bucht immer ab
+                if(f.interval === 3 && currentMonthNum % 3 === 0) return true; // Beispielrechnung Quartal
+                if(f.interval === 12 && currentMonthNum === 11) return true; // Jährlich im Dezember simulieren
+                return false;
+            });
+
+            if(realCalendarItems.length === 0) {
+                calContainer.innerHTML = '<p style="color:var(--text-muted); font-size:13px;">Diesen Monat stehen keine realen Abbuchungen an.</p>';
+            } else {
+                calContainer.innerHTML = realCalendarItems.map(f => `
+                    <div style="display:flex; justify-content:space-between; font-size:14px; padding:6px 0;">
+                        <span>💸 ${f.title} <span style="color:var(--text-muted); font-size:12px;">(${f.category})</span></span>
+                        <span style="font-weight:600; color:var(--accent-red);">${f.amount.toFixed(2)} €</span>
                     </div>
-                `;
+                `).join('');
+            }
+
+            // Render Dashboard Budget-Progress
+            const budgetContainer = document.getElementById('budget-container');
+            const mainCategories = ['Lebensmittel', 'Freizeit', 'Auto / Mobilität', 'Wohnen', 'Abo / Fixkosten', 'Sonstiges'];
+            const defaultLimits = { 'Lebensmittel': 300, 'Freizeit': 200, 'Auto / Mobilität': 150 };
+            let budgetHtml = '';
+            
+            mainCategories.forEach(cat => {
+                let spent = 0;
+                currentTx.forEach(t => { if(t.category === cat) spent += t.amount; });
+                if (spent > 0 || defaultLimits[cat]) {
+                    let lim = defaultLimits[cat] || 150;
+                    let pct = Math.min((spent / lim) * 100, 100);
+                    budgetHtml += `
+                        <div class="budget-row">
+                            <div class="budget-meta"><span>${cat}</span><span>${spent.toFixed(2)} € / ${lim} €</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--accent-red)' : categoryColors[cat]}"></div></div>
+                        </div>
+                    `;
+                }
             });
             budgetContainer.innerHTML = budgetHtml;
 
+            // --- REITER ANALYSE & PIE CHART ---
             const analysisContainer = document.getElementById('analysis-container');
+            const filterVal = document.getElementById('analysis-filter') ? document.getElementById('analysis-filter').value : 'current';
+            
+            let analysisTx = [];
+            if (filterVal === 'current') {
+                analysisTx = state.transactions.filter(t => t.cycleId === state.salaryDate);
+            } else {
+                analysisTx = state.transactions.filter(t => t.cycleId === filterVal);
+            }
+
             let catTotals = {};
-            state.transactions.forEach(t => {
+            let grandTotal = 0;
+            analysisTx.forEach(t => {
                 catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
+                grandTotal += t.amount;
             });
+            // Fixkosten anteilig dazurechnen
             state.fixkosten.forEach(f => {
                 catTotals[f.category] = (catTotals[f.category] || 0) + (f.amount / f.interval);
+                grandTotal += (f.amount / f.interval);
             });
 
-            if(Object.keys(catTotals).length === 0) {
-                analysisContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Noch keine Daten für eine Analyse vorhanden.</p>';
+            // Vormonats-Vergleich Motivation Box
+            const motBox = document.getElementById('motivation-box');
+            if(filterVal === 'current' && state.cycles.length > 0) {
+                motBox.style.display = 'block';
+                // Berechne Durchschnitt vergangener Zyklen
+                let historicalTotalSum = 0;
+                state.cycles.forEach(c => {
+                    let pastTx = state.transactions.filter(t => t.cycleId === c.id);
+                    pastTx.forEach(t => historicalTotalSum += t.amount);
+                    state.fixkosten.forEach(f => historicalTotalSum += (f.amount / f.interval));
+                });
+                let avgPastSpend = historicalTotalSum / state.cycles.length;
+                let difference = avgPastSpend - grandTotal;
+                
+                if(difference >= 0) {
+                    motBox.innerHTML = `<h4 style="color:var(--accent-green)">💪 Starker Sparmodus!</h4><p style="font-size:13px; margin-top:4px;">Du hast in diesem Zyklus bisher <b>${difference.toFixed(2)} € weniger</b> ausgegeben als im Schnitt der Vormonate!</p>`;
+                    motBox.style.borderColor = 'var(--accent-green)';
+                } else {
+                    motBox.innerHTML = `<h4 style="color:var(--accent-orange)">⚠️ Budget-Achtung</h4><p style="font-size:13px; margin-top:4px;">Du liegst aktuell <b>${Math.abs(difference).toFixed(2)} € über</b> deinem historischen Monatsdurchschnitt.</p>`;
+                    motBox.style.borderColor = 'var(--accent-orange)';
+                }
+            } else {
+                if(motBox) motBox.style.display = 'none';
+            }
+
+            // Render Text-Analyse
+            if(grandTotal === 0) {
+                analysisContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Daten vorhanden.</p>';
+                document.getElementById('chart-pie').style.background = `conic-gradient(var(--border-color) 0% 100%)`;
+                document.getElementById('chart-legend').innerHTML = '';
             } else {
                 analysisContainer.innerHTML = Object.keys(catTotals).map(cat => `
                     <div class="list-item">
-                        <div class="item-info">
-                            <div class="name">${cat}</div>
-                            <div class="sub">Gesamtbelastung in diesem Monat</div>
-                        </div>
+                        <div class="item-info"><div class="name">${cat}</div><div class="sub">Gesamtbelastung</div></div>
                         <div class="item-amount">${catTotals[cat].toFixed(2).replace('.', ',')} €</div>
                     </div>
                 `).join('');
+
+                // Render Conic Gradient (Donut Chart)
+                let gradientParts = [];
+                let currentPercent = 0;
+                let legendHtml = '';
+
+                Object.keys(catTotals).forEach(cat => {
+                    let val = catTotals[cat];
+                    let pct = (val / grandTotal) * 100;
+                    let color = categoryColors[cat] || '#fff';
+                    
+                    gradientParts.push(`${color} ${currentPercent}% ${currentPercent + pct}%`);
+                    currentPercent += pct;
+
+                    legendHtml += `
+                        <div class="legend-item">
+                            <div class="color-dot" style="background-color:${color}"></div>
+                            <span>${cat} (${pct.toFixed(0)}%)</span>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('chart-pie').style.background = `conic-gradient(${gradientParts.join(', ')})`;
+                document.getElementById('chart-legend').innerHTML = legendHtml;
             }
         }
 
