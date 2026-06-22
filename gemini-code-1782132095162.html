@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FinanzKompass - Haushaltsbuch</title>
+    <style>
+        :root {
+            --bg-color: #0d131a;
+            --card-bg: #16222f;
+            --text-color: #ffffff;
+            --text-muted: #8a9ba8;
+            --accent-blue: #00a8ff;
+            --accent-green: #00e676;
+            --accent-red: #ff5252;
+            --accent-orange: #ff9100;
+            --border-color: #233446;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 80px;
+            font-size: 16px;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard Cards */
+        .main-card {
+            background: linear-gradient(135deg, #1e2f42, #16222f);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .main-card .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .main-card .amount {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .mini-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mini-card .title {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .mini-card .val {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .val.green { color: var(--accent-green); }
+        .val.red { color: var(--accent-red); }
+        .val.orange { color: var(--accent-orange); }
+
+        /* Form / Sections */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-small {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Budgets / Progress */
+        .budget-row {
+            margin-bottom: 12px;
+        }
+        .budget-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            background-color: #233446;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent-blue);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* List items */
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #1d2d3d;
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .item-info .name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .item-info .sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .item-amount {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* Floating Action Button & Modal */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background-color: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 500px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .form-control {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 16px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            float: right;
+            font-size: 16px;
+        }
+
+        /* View Switching Toggle */
+        .tabs {
+            display: flex;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+        .view-section {
+            display: none;
+        }
+        .view-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">FinanzKompass</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchView('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchView('fixkosten')">Fixkosten & Rücklagen</button>
+            <button class="tab-btn" onclick="switchView('analyse')">Analyse</button>
+        </div>
+
+        <!-- VIEW: DASHBOARD -->
+        <div id="view-dashboard" class="view-section active">
+            <div class="main-card">
+                <div class="label" id="cycle-label">Aktueller Gehalts-Zyklus</div>
+                <div class="amount" id="free-budget">0,00 €</div>
+                <div style="font-size: 13px; color: var(--text-muted);">Frei verfügbar bis zum nächsten Gehalt</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="mini-card">
+                    <div class="title">Letztes Gehalt</div>
+                    <div class="val green" id="stat-salary">0,00 €</div>
+                </div>
+                <div class="mini-card">
+                    <div class="title">Virtuelle Rücklagen (mtl.)</div>
+                    <div class="val orange" id="stat-reserves">0,00 €</div>
+                </div>
+            </div>
+
+            <div class="section-title">Spontane Ausgaben & Budgets</div>
+            <div class="card" id="budget-container">
+                <!-- Dynamisch generiert -->
+            </div>
+
+            <div class="section-title">Letzte Buchungen</div>
+            <div class="card" id="transactions-container">
+                <!-- Dynamisch generiert -->
+            </div>
+        </div>
+
+        <!-- VIEW: FIXKOSTEN -->
+        <div id="view-fixkosten" class="view-section">
+            <div class="card">
+                <h3>Was sind virtuelle Rücklagen?</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">
+                    Trage hier auch Verträge ein, die <b>vierteljährlich</b> oder <b>jährlich</b> abgebucht werden. Die App rechnet diese automatisch auf den Monat herunter und zieht sie sofort am Gehaltstag vom "frei verfügbaren Budget" ab. So sparst du jeden Monat unbemerkt dafür an!
+                </p>
+            </div>
+            
+            <div class="section-title">Fixkosten & Abos verwalten</div>
+            <div class="card" id="fixkosten-container">
+                <!-- Dynamisch generiert -->
+            </div>
+        </div>
+
+        <!-- VIEW: ANALYSE -->
+        <div id="view-analyse" class="view-section">
+            <div class="section-title">Ausgaben nach Kategorien</div>
+            <div class="card" id="analysis-container">
+                <!-- Dynamisch generiert -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" onclick="openModal()">+</div>
+
+    <!-- Modal für Buchungen -->
+    <div class="modal" id="tx-modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal()">Schließen</button>
+            <h3 style="margin-bottom: 16px;">Neue Buchung erfassen</h3>
+            
+            <form id="tx-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label>Typ</label>
+                    <select class="form-control" id="form-type" onchange="toggleFormFields()">
+                        <option value="ausgabe">Spontane Ausgabe</option>
+                        <option value="gehalt">Gehaltseingang (Zyklus-Neustart)</option>
+                        <option value="fixkosten">Dauerauftrag / Fixkosten-Regel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Titel / Beschreibung</label>
+                    <input type="text" class="form-control" id="form-title" placeholder="z.B. REWE, Netflix, Gehalt" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Betrag (€)</label>
+                        <input type="number" step="0.01" class="form-control" id="form-amount" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group" id="field-category">
+                        <label>Kategorie</label>
+                        <select class="form-control" id="form-category">
+                            <option value="Lebensmittel">Lebensmittel</option>
+                            <option value="Freizeit">Freizeit & Hobby</option>
+                            <option value="Auto / Mobilität">Auto & Mobilität</option>
+                            <option value="Wohnen">Wohnen & Energie</option>
+                            <option value="Abo / Fixkosten">Abo & Fixkosten</option>
+                            <option value="Sonstiges">Sonstiges</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="field-interval" style="display: none;">
+                        <label>Intervall</label>
+                        <select class="form-control" id="form-interval">
+                            <option value="1">Monatlich</option>
+                            <option value="3">Vierteljährlich</option>
+                            <option value="12">Jährlich</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Buchung speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let state = {
+            transactions: [], 
+            fixkosten: [],     
+            lastSalary: 0,
+            salaryDate: null
+        };
+
+        function initData() {
+            const saved = localStorage.getItem('finanzkompass_state');
+            if (saved) {
+                state = JSON.parse(saved);
+            } else {
+                state.fixkosten = [
+                    { id: 1, title: 'Miete', amount: 650, interval: 1, category: 'Wohnen' },
+                    { id: 2, title: 'GEZ', amount: 55.08, interval: 3, category: 'Abo / Fixkosten' },
+                    { id: 3, title: 'Kfz-Versicherung', amount: 360, interval: 12, category: 'Auto / Mobilität' }
+                ];
+                state.transactions = [
+                    { title: 'Einkauf REWE', amount: 45.20, type: 'ausgabe', category: 'Lebensmittel', date: new Date().toISOString() }
+                ];
+                state.lastSalary = 2100;
+                state.salaryDate = new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(); 
+                saveState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('finanzkompass_state', JSON.stringify(state));
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('view-' + viewId).classList.add('active');
+            event.target.classList.add('active');
+            render();
+        }
+
+        function openModal() { document.getElementById('tx-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('tx-modal').style.display = 'none'; }
+        
+        function toggleFormFields() {
+            const type = document.getElementById('form-type').value;
+            if (type === 'fixkosten') {
+                document.getElementById('field-interval').style.display = 'block';
+                document.getElementById('field-category').style.display = 'block';
+            } else if (type === 'gehalt') {
+                document.getElementById('field-interval').style.display = 'none';
+                document.getElementById('field-category').style.display = 'none';
+            } else {
+                document.getElementById('field-interval').style.display = 'none';
+                document.getElementById('field-category').style.display = 'block';
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const type = document.getElementById('form-type').value;
+            const title = document.getElementById('form-title').value;
+            const amount = parseFloat(document.getElementById('form-amount').value);
+            const category = document.getElementById('form-category').value;
+            const interval = parseInt(document.getElementById('form-interval').value);
+
+            if (type === 'gehalt') {
+                state.lastSalary = amount;
+                state.salaryDate = new Date().toISOString();
+                state.transactions = []; 
+            } else if (type === 'fixkosten') {
+                state.fixkosten.push({
+                    id: Date.now(),
+                    title,
+                    amount,
+                    interval,
+                    category
+                });
+            } else {
+                state.transactions.unshift({
+                    title,
+                    amount,
+                    type,
+                    category,
+                    date: new Date().toISOString()
+                });
+            }
+
+            saveState();
+            render();
+            closeModal();
+            document.getElementById('tx-form').reset();
+            toggleFormFields();
+        }
+
+        function deleteFixkosten(id) {
+            state.fixkosten = state.fixkosten.filter(f => f.id !== id);
+            saveState();
+            render();
+        }
+
+        function render() {
+            let totalMonthlyFixkosten = 0;
+            state.fixkosten.forEach(f => {
+                totalMonthlyFixkosten += (f.amount / f.interval);
+            });
+
+            let totalSpontaneous = 0;
+            state.transactions.forEach(t => {
+                if(t.type === 'ausgabe') totalSpontaneous += t.amount;
+            });
+
+            let freeBudget = state.lastSalary - totalMonthlyFixkosten - totalSpontaneous;
+
+            document.getElementById('free-budget').innerText = freeBudget.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('stat-salary').innerText = state.lastSalary.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('stat-reserves').innerText = totalMonthlyFixkosten.toFixed(2).replace('.', ',') + ' €';
+            
+            if (state.salaryDate) {
+                const d = new Date(state.salaryDate);
+                document.getElementById('cycle-label').innerText = `Zyklus seit: ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })}`;
+            }
+
+            const txContainer = document.getElementById('transactions-container');
+            if(state.transactions.length === 0) {
+                txContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Noch keine Ausgaben in diesem Zyklus erfasst.</p>';
+            } else {
+                txContainer.innerHTML = state.transactions.map(t => `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="name">${t.title}</div>
+                            <div class="sub">${t.category}</div>
+                        </div>
+                        <div class="item-amount" style="color: var(--accent-red);">- ${t.amount.toFixed(2).replace('.', ',')} €</div>
+                    </div>
+                `).join('');
+            }
+
+            const fixContainer = document.getElementById('fixkosten-container');
+            if(state.fixkosten.length === 0) {
+                fixContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Keine Fixkosten hinterlegt.</p>';
+            } else {
+                fixContainer.innerHTML = state.fixkosten.map(f => {
+                    let intervalText = 'mtl.';
+                    if(f.interval === 3) intervalText = 'alle 3 Monate';
+                    if(f.interval === 12) intervalText = 'jährlich';
+                    
+                    let anteil = f.amount / f.interval;
+
+                    return `
+                        <div class="list-item">
+                            <div class="item-info">
+                                <div class="name">${f.title} <span style="font-size:11px; color:var(--accent-orange)">(${intervalText})</span></div>
+                                <div class="sub">Realer Abzug: ${f.amount.toFixed(2)} € | Monatlicher Anteil: ${anteil.toFixed(2)} €</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap: 10px;">
+                                <div class="item-amount" style="color: var(--text-muted);">${anteil.toFixed(2)} €/Mtl.</div>
+                                <button class="btn-small" style="color:var(--accent-red);" onclick="deleteFixkosten(${f.id})">✕</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const budgetContainer = document.getElementById('budget-container');
+            const categories = ['Lebensmittel', 'Freizeit', 'Auto / Mobilität'];
+            const limits = { 'Lebensmittel': 300, 'Freizeit': 200, 'Auto / Mobilität': 150 };
+            
+            let budgetHtml = '';
+            categories.forEach(cat => {
+                let spent = 0;
+                state.transactions.forEach(t => {
+                    if(t.category === cat) spent += t.amount;
+                });
+                let limit = limits[cat] || 100;
+                let pct = Math.min((spent / limit) * 100, 100);
+                
+                budgetHtml += `
+                    <div class="budget-row">
+                        <div class="budget-meta">
+                            <span>${cat}</span>
+                            <span>${spent.toFixed(2)} € / ${limit} €</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${pct}%; background-color: ${pct > 90 ? 'var(--accent-red)' : 'var(--accent-blue)'}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            budgetContainer.innerHTML = budgetHtml;
+
+            const analysisContainer = document.getElementById('analysis-container');
+            let catTotals = {};
+            state.transactions.forEach(t => {
+                catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
+            });
+            state.fixkosten.forEach(f => {
+                catTotals[f.category] = (catTotals[f.category] || 0) + (f.amount / f.interval);
+            });
+
+            if(Object.keys(catTotals).length === 0) {
+                analysisContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px;">Noch keine Daten für eine Analyse vorhanden.</p>';
+            } else {
+                analysisContainer.innerHTML = Object.keys(catTotals).map(cat => `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="name">${cat}</div>
+                            <div class="sub">Gesamtbelastung in diesem Monat</div>
+                        </div>
+                        <div class="item-amount">${catTotals[cat].toFixed(2).replace('.', ',')} €</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.onload = function() {
+            initData();
+            render();
+        };
+    </script>
+</body>
+</html>
