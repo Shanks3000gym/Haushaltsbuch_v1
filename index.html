@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FinanzKompass v1.7.0</title>
+    <title>FinanzKompass v1.7.1</title>
     <style>
         :root {
             --bg-color: #080c10;
@@ -218,7 +218,7 @@
             display: block; font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;
         }
         .form-control {
-            width: 100%; background-color: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 12px; padding: 14px; color: white; font-size: 16px;
+            width: 100%; background-color: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; color: white; font-size: 16px;
         }
         .form-control:focus { outline: none; border-color: var(--accent-blue); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -266,11 +266,12 @@
 
     <header>
         <div class="header-title">FinanzKompass</div>
-        <div style="font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--glass-border); font-weight: 700; color: var(--text-muted);">v1.7.0</div>
+        <div style="font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--glass-border); font-weight: 700; color: var(--text-muted);">v1.7.1</div>
     </header>
 
     <div class="container">
         
+        <!-- DASHBOARD SECTION -->
         <div id="view-dashboard" class="view-section active">
             <div class="main-card">
                 <div class="label" id="cycle-label">Gehalts-Zyklus</div>
@@ -313,6 +314,7 @@
             </div>
         </div>
 
+        <!-- FIXKOSTEN SECTION -->
         <div id="view-fixkosten" class="view-section">
             <div class="main-card" style="background: linear-gradient(135deg, #11251d, #0b1411); border-color: rgba(0, 240, 118, 0.2);">
                 <div class="label" style="color: var(--accent-green)">Finanz-Autopilot</div>
@@ -326,6 +328,7 @@
             <div class="card" id="calendar-container" style="padding: 10px 16px;"></div>
         </div>
 
+        <!-- ANALYSE SECTION -->
         <div id="view-analyse" class="view-section">
             <div class="main-card" style="background: linear-gradient(135deg, #1f1c3e, #131026); border-color: rgba(168, 56, 255, 0.2); margin-bottom: 16px;">
                 <div class="label" style="color: #c77dff;">Variables Einkommen Orakel</div>
@@ -348,6 +351,7 @@
         </div>
     </div>
 
+    <!-- TABS -->
     <div class="nav-wrapper">
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-dashboard">Dashboard</button>
@@ -358,6 +362,7 @@
 
     <div class="fab" onclick="openModal()">+</div>
 
+    <!-- MODAL -->
     <div class="modal" id="tx-modal">
         <div class="modal-content">
             <button class="btn-close" onclick="closeModal()">✕</button>
@@ -379,7 +384,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group"><label>Betrag in €</label><input type="text" class="form-control" id="form-amount" placeholder="0,00" required></div>
-                    <div class="form-group" id="field-date"><label>Datum</label><input type="date" class="form-control" id="form-date"></div>
+                    <!-- REPARIERT: Datum bleibt jetzt IMMER eingeblendet für volle Kontrolle -->
+                    <div class="form-group" id="field-date"><label>Datum</label><input type="date" class="date-input form-control" id="form-date"></div>
                     <div class="form-group" id="field-category">
                         <label>Kategorie</label>
                         <select class="form-control" id="form-category">
@@ -475,6 +481,7 @@
 
         function toggleFormFields() {
             const type = document.getElementById('form-type').value;
+            // Datumsfeld bleibt bei Gehalt und Ausgaben jetzt sichtbar!
             if (type === 'fixkosten' || type === 'sparrate') {
                 document.getElementById('field-interval').style.display = 'block';
                 document.getElementById('field-day').style.display = 'block';
@@ -485,7 +492,7 @@
                 document.getElementById('field-interval').style.display = 'none';
                 document.getElementById('field-day').style.display = 'none';
                 document.getElementById('field-category').style.display = 'none';
-                document.getElementById('field-date').style.display = 'none';
+                document.getElementById('field-date').style.display = 'block';
             } else {
                 document.getElementById('field-interval').style.display = 'none';
                 document.getElementById('field-day').style.display = 'none';
@@ -508,7 +515,9 @@
             const interval = parseInt(document.getElementById('form-interval').value);
             const fDay = parseInt(document.getElementById('form-day').value) || 1;
             const chosenDate = document.getElementById('form-date').value;
-            const nowStr = new Date().toISOString();
+            
+            // Nutze das ausgewählte Datum, andernfalls "jetzt"
+            let targetDateStr = chosenDate ? new Date(chosenDate).toISOString() : new Date().toISOString();
 
             if(editId) {
                 if(type === 'fixkosten' || type === 'sparrate') {
@@ -520,10 +529,11 @@
                         const d = new Date(state.salaryDate);
                         const label = `Abrechnung ab ${d.getDate()}. ${d.toLocaleString('de-DE', { month: 'short' })} ${d.getFullYear().toString().substr(-2)}`;
                         if(!state.cycles.some(c => c.id === state.salaryDate)) {
-                            state.cycles.push({ id: state.salaryDate, label, start: state.salaryDate, end: nowStr, salary: state.lastSalary });
+                            state.cycles.push({ id: state.salaryDate, label, start: state.salaryDate, end: targetDateStr, salary: state.lastSalary });
                         }
                     }
-                    state.lastSalary = amount; state.salaryDate = nowStr;
+                    state.lastSalary = amount; 
+                    state.salaryDate = targetDateStr; // Setzt das neue Wunschdatum fest!
                 } else if (type === 'fixkosten' || type === 'sparrate') {
                     state.fixkosten.push({ id: Date.now(), title, amount, interval, category, day: fDay, type });
                 } else {
